@@ -1,72 +1,92 @@
-abstract class Seat {
-    protected String category;
-    protected int capacity;
-    protected double price;
+import java.util.HashMap;
+import java.util.Map;
 
-    public Seat(String category, int capacity, double price) {
-        this.category = category;
-        this.capacity = capacity;
-        this.price = price;
+/**
+ * RoomInventory
+ *
+ * This class manages room availability using a centralized HashMap.
+ * It acts as the single source of truth for room inventory in the system.
+ *
+ * @author Yoshita
+ * @version 1.0
+ */
+class RoomInventory {
+
+    // HashMap to store room type and available count
+    private HashMap<String, Integer> inventory;
+
+    /**
+     * Constructor initializes the room inventory.
+     */
+    public RoomInventory() {
+        inventory = new HashMap<>();
+
+        // Registering room types with availability
+        inventory.put("Single Room", 10);
+        inventory.put("Double Room", 7);
+        inventory.put("Suite Room", 3);
     }
 
-    // Method to display seat details
-    public void displayDetails() {
-        System.out.println("Seat Category: " + category);
-        System.out.println("Capacity: " + capacity);
-        System.out.println("Price: ₹" + price);
+    /**
+     * Method to get availability of a specific room type
+     */
+    public int getAvailability(String roomType) {
+        return inventory.getOrDefault(roomType, 0);
+    }
+
+    /**
+     * Method to update availability of a room type
+     */
+    public void updateAvailability(String roomType, int newCount) {
+        if (inventory.containsKey(roomType)) {
+            inventory.put(roomType, newCount);
+        } else {
+            System.out.println("Room type not found.");
+        }
+    }
+
+    /**
+     * Method to display current inventory
+     */
+    public void displayInventory() {
+        System.out.println("Current Room Inventory:");
+
+        for (Map.Entry<String, Integer> entry : inventory.entrySet()) {
+            System.out.println(entry.getKey() + " : " + entry.getValue() + " rooms available");
+        }
     }
 }
 
-// Regular seat class
-class RegularSeat extends Seat {
-    public RegularSeat() {
-        super("Regular", 100, 150.0);
-    }
-}
 
-// Premium seat class
-class PremiumSeat extends Seat {
-    public PremiumSeat() {
-        super("Premium", 60, 250.0);
-    }
-}
-
-// VIP seat class
-class VIPSeat extends Seat {
-    public VIPSeat() {
-        super("VIP", 30, 400.0);
-    }
-}
-
-// Main application class
+/**
+ * BookMyStayApp
+ *
+ * Entry point of the application demonstrating centralized
+ * room inventory management using HashMap.
+ */
 public class BookMyStayApp {
 
     public static void main(String[] args) {
 
-        // Creating seat objects (Polymorphism)
-        Seat regular = new RegularSeat();
-        Seat premium = new PremiumSeat();
-        Seat vip = new VIPSeat();
+        // Initialize inventory system
+        RoomInventory inventory = new RoomInventory();
 
-        // Simple availability variables
-        int regularAvailable = 75;
-        int premiumAvailable = 40;
-        int vipAvailable = 20;
+        System.out.println("Welcome to BookMyStayApp\n");
 
-        System.out.println("Welcome to BookMyShowApp");
-        System.out.println("Available Seat Categories\n");
+        // Display current inventory
+        inventory.displayInventory();
 
-        System.out.println("---- Regular Seat ----");
-        regular.displayDetails();
-        System.out.println("Available Seats: " + regularAvailable);
+        // Retrieve availability
+        System.out.println("\nChecking availability for Double Room:");
+        System.out.println("Available: " + inventory.getAvailability("Double Room"));
 
-        System.out.println("\n---- Premium Seat ----");
-        premium.displayDetails();
-        System.out.println("Available Seats: " + premiumAvailable);
+        // Update inventory
+        System.out.println("\nUpdating availability after booking...");
+        inventory.updateAvailability("Double Room", 5);
 
-        System.out.println("\n---- VIP Seat ----");
-        vip.displayDetails();
-        System.out.println("Available Seats: " + vipAvailable);
+        // Display updated inventory
+        System.out.println("\nUpdated Inventory:");
+        inventory.displayInventory();
 
         System.out.println("\nApplication terminated.");
     }
